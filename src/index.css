@@ -1,0 +1,296 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #10131c;
+  color: white;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+
+/* =====================================================
+   MAIN APPLICATION
+   ===================================================== */
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 25% 40%,
+      rgba(130, 90, 255, 0.18),
+      transparent 35%
+    ),
+    #10131c;
+}
+
+
+/* =====================================================
+   LIVE2D SIDE
+   ===================================================== */
+
+.character-section {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live2d-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live2d-canvas {
+  width: 100%;
+  height: 100%;
+  max-width: 900px;
+  max-height: 950px;
+  display: block;
+  object-fit: contain;
+}
+
+.live2d-status {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #d5d7df;
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   CHAT SIDE
+   ===================================================== */
+
+.chat-section {
+  width: 430px;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.20);
+}
+
+.chatbot {
+  width: 100%;
+  height: 650px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #1d202b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+
+/* =====================================================
+   CHAT HEADER
+   ===================================================== */
+
+.chat-header {
+  padding: 20px;
+  background: #242836;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.chat-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.chat-subtitle {
+  margin-top: 4px;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   MESSAGES
+   ===================================================== */
+
+.chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  max-width: 82%;
+  padding: 11px 14px;
+  border-radius: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 14px;
+}
+
+.user-message {
+  align-self: flex-end;
+  background: #5865f2;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-message {
+  align-self: flex-start;
+  background: #303442;
+  border-bottom-left-radius: 4px;
+}
+
+
+/* =====================================================
+   INPUT
+   ===================================================== */
+
+.chat-input-area {
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  background: #242836;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.chat-input-area input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px;
+  border: none;
+  outline: none;
+  border-radius: 9px;
+  background: #343846;
+  color: white;
+  font-size: 15px;
+}
+
+.chat-input-area input::placeholder {
+  color: #9297a5;
+}
+
+.chat-input-area button {
+  padding: 0 18px;
+  border: none;
+  border-radius: 9px;
+  background: #5865f2;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chat-input-area button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .character-section {
+    min-height: 600px;
+    height: 65vh;
+  }
+
+  .live2d-container {
+    height: 65vh;
+  }
+
+  .chat-section {
+    width: 100%;
+    min-height: auto;
+    padding: 15px;
+  }
+
+  .chatbot {
+    height: 600px;
+  }
+}
+
+
+/* =====================================================
+   DESKTOP PET MODE (Electron, ?mode=pet)
+   ===================================================== */
+
+/* Make the page see-through only when the pet layout is shown */
+html:has(.pet),
+body:has(.pet),
+body:has(.pet) #root {
+  background: transparent;
+  overflow: hidden;
+}
+
+.pet {
+  width: 400px;
+  height: 650px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: transparent;
+  -webkit-app-region: drag; /* drag her around the screen */
+}
+
+.pet .bubble {
+  max-width: 270px;
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(74, 42, 85, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.pet .live2d-container {
+  width: 400px;
+  height: 650px;
+  background: transparent;
+}
+
+.pet .live2d-canvas {
+  width: 400px;
+  height: 650px;
+  max-width: none;
+  max-height: none;
+}
