@@ -4,18 +4,18 @@ import { Live2DModel } from "pixi-live2d-display/cubism4";
 
 window.PIXI = PIXI;
 
-// Are we running inside the Electron desktop-pet window?
+
 const IS_PET =
   new URLSearchParams(window.location.search).get("mode") === "pet";
 
-// Your own model (put the folder inside public/live2d/Haru/)
+
 const LOCAL_MODEL = "/live2d/Haru/Haru.model3.json";
 
-// Free test model, used automatically if your local one isn't found
+
 const FALLBACK_MODEL =
   "https://cdn.jsdelivr.net/gh/guansss/pixi-live2d-display/test/assets/haru/haru_greeter_t03.model3.json";
 
-// Pet mode matches the Electron window size (400 x 650)
+
 const CANVAS_W = IS_PET ? 400 : 800;
 const CANVAS_H = IS_PET ? 650 : 900;
 
@@ -24,7 +24,7 @@ async function pickModelUrl() {
     const res = await fetch(LOCAL_MODEL);
     if (res.ok) return LOCAL_MODEL;
   } catch {
-    /* ignore and use fallback */
+    
   }
   return FALLBACK_MODEL;
 }
