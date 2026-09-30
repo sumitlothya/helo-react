@@ -107,11 +107,11 @@ function Chatbot() {
   }
 
   return (
-    <div className="chatbot">
-      <div className="chat-header">
-        <div className="chat-title">Haru AI</div>
-        <div className="chat-subtitle">Live2D Assistant</div>
-      </div>
+  <div className="chatbot">
+    <div className="chat-header">
+      <div className="chat-title">EXO ASSISTANCE</div>
+      <div className="chat-subtitle">Live2D Assistant</div>
+    </div>
 
       <div className="chat-messages">
         {messages.map((item, index) => (
