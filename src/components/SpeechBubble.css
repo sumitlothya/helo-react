@@ -1,0 +1,73 @@
+/* The parent (character area) must have position: relative */
+.haru-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: 80%;              /* raise/lower this to sit above her head */
+  transform: translateX(-50%) translateY(8px);
+  width: 260px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+}
+
+.haru-wrap.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.haru-bubble {
+  position: relative;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(120, 60, 110, 0.92);
+  border: 1px solid rgba(255, 150, 200, 0.6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+}
+
+/* little tail pointing down to her head */
+.haru-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  background: rgba(120, 60, 110, 0.92);
+  border-right: 1px solid rgba(255, 150, 200, 0.6);
+  border-bottom: 1px solid rgba(255, 150, 200, 0.6);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.haru-mood {
+  margin-top: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(30, 20, 40, 0.85);
+  border: 1px solid rgba(255, 150, 200, 0.4);
+  color: #ffd0e8;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.haru-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: #ff5c9a;
+}

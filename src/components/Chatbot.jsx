@@ -1,24 +1,36 @@
 import React, { useState } from "react";
+import useVoice, { speak, stopSpeaking, voiceSupported } from "./useVoice";
 
 const MODEL = "openai/gpt-oss-120b";
 
-function Chatbot() {
+const WELCOME = {
+  role: "assistant",
+  content: "Hello! I'm Haru's AI assistant. Ask me anything!",
+};
+
+// remove markdown symbols so text looks clean in chat, bubble and voice
+function cleanText(text) {
+  return text
+    .replace(/\*\*/g, "")
+    .replace(/__/g, "")
+    .replace(/`/g, "")
+    .replace(/^#+\s*/gm, "")
+    .trim();
+}
+
+// onBubble({ text, mood }) shows Haru's reply above her head (see SpeechBubble)
+function Chatbot({ onBubble }) {
   const [message, setMessage] = useState("");
-
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      content: "Hello! I'm Haru's AI assistant. Ask me anything!",
-    },
-  ]);
-
+  const [messages, setMessages] = useState([WELCOME]);
   const [loading, setLoading] = useState(false);
+  const [voiceOn, setVoiceOn] = useState(true); // Haru speaks her answers
 
-  async function sendMessage() {
-    if (!message.trim()) return;
+  // Pass text directly (from voice) or fall back to the input box
+  async function sendMessage(text) {
+    const userMessage = (typeof text === "string" ? text : message).trim();
+
+    if (!userMessage) return;
     if (loading) return;
-
-    const userMessage = message.trim();
 
     setMessages((previous) => [
       ...previous,
@@ -27,6 +39,7 @@ function Chatbot() {
 
     setMessage("");
     setLoading(true);
+    onBubble?.({ text: "Haru is thinking...", mood: "THINKING" });
 
     try {
       const apiKey = import.meta.env.VITE_GROQ_API_KEY;
@@ -49,7 +62,7 @@ function Chatbot() {
               {
                 role: "system",
                 content:
-                  "You are Haru, a friendly anime-style AI assistant. Give helpful, clear and concise answers.",
+                  "You are Haru, a friendly anime-style AI assistant. Give helpful, clear and concise answers. Reply in plain text only. Never use markdown, asterisks, or bullet symbols. Keep answers short and conversational.",
               },
               ...messages.map((item) => ({
                 role: item.role,
@@ -75,30 +88,68 @@ function Chatbot() {
         );
       }
 
-      const answer = data?.choices?.[0]?.message?.content;
+      const raw = data?.choices?.[0]?.message?.content;
 
-      if (!answer) {
+      if (!raw) {
         throw new Error("Groq returned an empty answer.");
       }
+
+      const answer = cleanText(raw);
 
       setMessages((previous) => [
         ...previous,
         { role: "assistant", content: answer },
       ]);
+
+      onBubble?.({ text: answer, mood: "HAPPY" });
+      if (voiceOn) speak(answer);
     } catch (error) {
       console.error("Groq error:", error);
 
+      const errorText = `Error connecting to Groq: ${error.message}`;
+
       setMessages((previous) => [
         ...previous,
-        {
-          role: "assistant",
-          content: `Error connecting to Groq: ${error.message}`,
-        },
+        { role: "assistant", content: errorText },
       ]);
+
+      onBubble?.({ text: errorText, mood: "SAD" });
     } finally {
       setLoading(false);
     }
   }
+
+  // Handles voice commands first, otherwise sends to the AI
+  function handleVoice(text) {
+    const t = text.toLowerCase();
+
+    if (t.includes("open youtube")) {
+      window.open("https://youtube.com", "_blank");
+      reply("Opening YouTube!");
+    } else if (t.includes("open google")) {
+      window.open("https://google.com", "_blank");
+      reply("Opening Google!");
+    } else if (t.includes("clear chat")) {
+      setMessages([WELCOME]);
+      onBubble?.({ text: "", mood: "HAPPY" });
+      stopSpeaking();
+    } else if (t.includes("stop talking") || t.includes("be quiet")) {
+      stopSpeaking();
+    } else {
+      sendMessage(text);
+    }
+  }
+
+  function reply(text) {
+    setMessages((previous) => [
+      ...previous,
+      { role: "assistant", content: text },
+    ]);
+    onBubble?.({ text, mood: "HAPPY" });
+    if (voiceOn) speak(text);
+  }
+
+  const { listening, start, stop } = useVoice(handleVoice);
 
   function handleKeyDown(event) {
     if (event.key === "Enter") {
@@ -107,11 +158,11 @@ function Chatbot() {
   }
 
   return (
-  <div className="chatbot">
-    <div className="chat-header">
-      <div className="chat-title">EXO ASSISTANCE</div>
-      <div className="chat-subtitle">Live2D Assistant</div>
-    </div>
+    <div className="chatbot">
+      <div className="chat-header">
+        <div className="chat-title">EXO ASSISTANCE</div>
+        <div className="chat-subtitle">Live2D Assistant</div>
+      </div>
 
       <div className="chat-messages">
         {messages.map((item, index) => (
@@ -138,11 +189,33 @@ function Chatbot() {
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Talk to Haru..."
+          placeholder={listening ? "Listening..." : "Talk to Haru..."}
           disabled={loading}
         />
 
-        <button type="button" onClick={sendMessage} disabled={loading}>
+        {voiceSupported && (
+          <button
+            type="button"
+            onClick={listening ? stop : start}
+            disabled={loading}
+            title="Voice input"
+          >
+            {listening ? "🔴" : "🎤"}
+          </button>
+        )}
+
+        <button
+          type="button"
+          onClick={() => {
+            if (voiceOn) stopSpeaking();
+            setVoiceOn(!voiceOn);
+          }}
+          title="Toggle Haru's voice"
+        >
+          {voiceOn ? "🔊" : "🔇"}
+        </button>
+
+        <button type="button" onClick={() => sendMessage()} disabled={loading}>
           {loading ? "..." : "Send"}
         </button>
       </div>
