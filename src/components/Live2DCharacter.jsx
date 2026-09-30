@@ -64,11 +64,11 @@ function Live2DCharacter() {
           return;
         }
 
-        // Scale her to fit the canvas, feet at the bottom
+        
         const scale = Math.min(
-          (CANVAS_W * 0.9) / model.width,
-          (CANVAS_H * 0.95) / model.height
-        );
+  (CANVAS_W * 0.9) / model.width,
+  (CANVAS_H * (IS_PET ? 0.7 : 0.95)) / model.height
+);
         model.scale.set(scale);
         model.anchor.set(0.5, 1);
         model.x = CANVAS_W / 2;

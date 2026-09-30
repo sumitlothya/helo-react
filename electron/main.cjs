@@ -1,9 +1,11 @@
 const { app, BrowserWindow, screen } = require('electron');
 
-function createWindow() {
+const URL = 'http://localhost:5173/';
+
+function createPetWindow() {
   const { height } = screen.getPrimaryDisplay().workAreaSize;
 
-  const win = new BrowserWindow({
+  const pet = new BrowserWindow({
     width: 400,
     height: 650,
     x: 20,
@@ -16,8 +18,29 @@ function createWindow() {
     resizable: false,
   });
 
-  win.loadURL('http://localhost:5173/?mode=pet');
+  pet.loadURL(`${URL}?mode=pet`);
+  return pet;
 }
 
-app.whenReady().then(createWindow);
+function createChatWindow() {
+  const chat = new BrowserWindow({
+    width: 1000,
+    height: 750,
+    title: 'EXO ASSISTANCE',
+    autoHideMenuBar: true,
+    backgroundColor: '#0f0f1a',
+  });
+
+  chat.loadURL(URL);
+
+  // Closing the chat window closes Haru too
+  chat.on('closed', () => app.quit());
+  return chat;
+}
+
+app.whenReady().then(() => {
+  createPetWindow();
+  createChatWindow();
+});
+
 app.on('window-all-closed', () => app.quit());

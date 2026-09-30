@@ -71,3 +71,5 @@
   border-radius: 50%;
   background: #ff5c9a;
 }
+.pet .haru-wrap { bottom: 72%; }
+.pet .haru-bubble { max-height: 150px; }
